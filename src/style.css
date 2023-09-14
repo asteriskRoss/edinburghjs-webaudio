@@ -1,0 +1,64 @@
+body, h1, h2, label, ul, li, input, button, select {
+  font-family: Helvetica, sans-serif;
+  padding: 0px;
+  margin: 0px;
+}
+
+a {
+  background-color: #EEE;
+}
+
+
+body {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 72px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+h2 {
+  font-size: 56px;
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
+
+label {
+  font-size: 48px;
+  display: inline-block;
+  min-width: 400px;
+  margin-bottom: 10px;
+}
+
+ul {
+  padding-left: 0px;
+  font-size: 48px;
+  list-style: none;
+}
+
+input {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+input[type=checkbox] {
+  transform: scale(4);
+  margin: 20px;
+  padding: 20px;
+}
+
+button {
+  font-size: 24px;
+  margin: 20px;
+  padding: 20px;
+}
+
+select {
+  font-size: 24px;
+  margin: 20px;
+  padding: 20px;
+}

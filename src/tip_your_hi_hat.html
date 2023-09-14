@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tip your hi-hat</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module">
+      import { HiHat } from './hi-hat.js';
+
+      // Use a global object for application state
+      const state = {
+        context: null,
+        hiHat: null
+      };
+
+      // Set up the page
+      window.addEventListener('DOMContentLoaded', () => {
+        document
+          .getElementById('initialize-button')
+          .addEventListener('click', init);
+        document
+          .getElementById('play-button')
+          .addEventListener('click', playSound);
+      });
+
+      function init() {
+        if (state.context === null) {
+          state.context = new AudioContext();
+          if (state.context) {
+            log('Initialized Web Audio.');
+            state.hiHat = new HiHat(state.context, state.context.destination);
+            log('Created new Hi-hat');
+
+            const freqInput = document.getElementById('frequency-input');
+            freqInput.value = state.hiHat.filter.frequency.value;
+            freqInput.addEventListener(
+              'change',
+              () =>
+                (state.hiHat.filter.frequency.value = parseFloat(
+                  freqInput.value
+                ))
+            );
+
+            const qInput = document.getElementById('q-input');
+            qInput.value = state.hiHat.filter.Q.value;
+            qInput.addEventListener(
+              'change',
+              () => (state.hiHat.filter.Q.value = parseFloat(qInput.value))
+            );
+
+            const attackInput = document.getElementById('attack-input');
+            attackInput.value = state.hiHat.adsr.attack;
+            attackInput.addEventListener(
+              'change',
+              () => (state.hiHat.adsr.attack = parseFloat(attackInput.value))
+            );
+
+            const decayInput = document.getElementById('decay-input');
+            decayInput.value = state.hiHat.adsr.decay;
+            decayInput.addEventListener(
+              'change',
+              () => (state.hiHat.adsr.decay = parseFloat(decayInput.value))
+            );
+
+            const sustainInput = document.getElementById('sustain-input');
+            sustainInput.value = state.hiHat.adsr.sustain;
+            sustainInput.addEventListener(
+              'change',
+              () => (state.hiHat.adsr.sustain = parseFloat(sustainInput.value))
+            );
+
+            const releaseInput = document.getElementById('release-input');
+            releaseInput.value = state.hiHat.adsr.release;
+            releaseInput.addEventListener(
+              'change',
+              () => (state.hiHat.adsr.release = parseFloat(releaseInput.value))
+            );
+          }
+        }
+      }
+
+      function playSound() {
+        if (!state.hiHat) {
+          log('Hi-hat not initialized.');
+          return;
+        }
+
+        log('Playing hi-hat.');
+        state.hiHat.play();
+      }
+
+      // Log to show what is happening
+      function log(message) {
+        // Log to console
+        console.log(message);
+
+        // And to the page
+        const liEl = document.createElement('li');
+        const content = document.createTextNode(message);
+        liEl.appendChild(content);
+        const logEl = document.getElementById('log');
+        logEl.appendChild(liEl);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Tip your hi-hat</h1>
+
+    <div>
+      <h2>Controls</h2>
+      <ul>
+        <li>
+          <label for="frequency-input">Filter frequency:</label>
+          <input id="frequency-input" type="number" />
+        </li>
+        <li>
+          <label for="q-input">Filter Q:</label>
+          <input id="q-input" type="number" />
+        </li>
+
+        <li>
+          <label for="attack-input">Attack:</label>
+          <input id="attack-input" type="number" />
+        </li>
+
+        <li>
+          <label for="decay-input">Decay:</label>
+          <input id="decay-input" type="number" />
+        </li>
+
+        <li>
+          <label for="sustain-input">Sustain:</label>
+          <input id="sustain-input" type="number" />
+        </li>
+
+        <li>
+          <label for="release-input">Release:</label>
+          <input id="release-input" type="number" />
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h2>Buttons</h2>
+      <button id="initialize-button">Initialize</button>
+      <button id="play-button">Play sound</button>
+    </div>
+    <div>
+      <p>
+        Previous: <a href="here_come_the_drums.html">Here come the drums</a>
+      </p>
+      <p>
+        Next: <a href="get_ready_for_the_riff.html">Get ready for the riff</a>
+      </p>
+    </div>
+    <div>
+      <h2>Log</h2>
+      <ul id="log"></ul>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello, Buffers</title>
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      // Use a global object for application state
+      const state = {
+        context: null,
+        audioBuffer: null,
+        gainNode: null,
+        gainControlBuffer: null
+      };
+
+      // Set up the page
+      window.addEventListener('DOMContentLoaded', () => {
+        document
+          .getElementById('init-wa-button')
+          .addEventListener('click', init);
+        document
+          .getElementById('init-audio-buffer-button')
+          .addEventListener('click', initAudioBuffer);
+        document
+          .getElementById('create-gain-node-button')
+          .addEventListener('click', initGainNode);
+        document
+          .getElementById('init-gain-control-buffer-button')
+          .addEventListener('click', initGainControlBuffer);
+        document
+          .getElementById('play-button')
+          .addEventListener('click', playSound);
+        document
+          .getElementById('control-gain-button')
+          .addEventListener('click', controlGain);
+      });
+
+      // Initialisation of the Audio Context can only happen
+      // after a user interacts with the page
+      function init() {
+        if (state.context === null) {
+          state.context = new AudioContext();
+          if (state.context) log('Initialized Web Audio.');
+        }
+      }
+
+      // Fill our audio buffer with a sine wave
+      function initAudioBuffer() {
+        if (!state.context) {
+          log('Web Audio not yet initialized.');
+          return;
+        }
+
+        // Parameters for AudioContext.createBuffer();
+        const numberOfChannels = 1;
+        const lengthInSeconds = 2;
+        const sampleRate = state.context.sampleRate;
+        const lengthOfBuffer = lengthInSeconds * sampleRate;
+
+        // Create the buffer
+        const buffer = state.context.createBuffer(
+          numberOfChannels,
+          lengthOfBuffer,
+          sampleRate
+        );
+
+        // Fill the buffer with a sine wave
+        const arrayBuffer = buffer.getChannelData(0);
+        const freq = 220.0;
+
+        for (let i = 0; i < lengthOfBuffer; i++) {
+          arrayBuffer[i] = Math.sin((2 * Math.PI * i * freq) / sampleRate);
+        }
+
+        // Save our newly created buffer
+        state.audioBuffer = buffer;
+        log('Initialized audio buffer.');
+      }
+
+      // Fill a buffer we will use to control gain with a square wave (on/off)
+      function initGainControlBuffer() {
+        if (!state.context) {
+          log('Web Audio not yet initialized.');
+          return;
+        }
+
+        // Parameters for AudioContext.createBuffer();
+        const numberOfChannels = 1;
+        const lengthInSeconds = 1;
+        const sampleRate = state.context.sampleRate;
+        const lengthOfBuffer = lengthInSeconds * sampleRate;
+
+        // Create the buffer
+        const buffer = state.context.createBuffer(
+          numberOfChannels,
+          lengthOfBuffer,
+          sampleRate
+        );
+
+        // Fill the buffer with a square wave
+        const arrayBuffer = buffer.getChannelData(0);
+        const freq = 1.0;
+
+        for (let i = 0; i < lengthOfBuffer; i++) {
+          // Use a sine wave but square it using Math.sign to result in -1 or +1
+          // then add one and divide by two to get values of 0 and 1.
+          arrayBuffer[i] =
+            (Math.sign(Math.sin((2 * Math.PI * i * freq) / sampleRate)) + 1) /
+            2;
+        }
+
+        // Save our newly created buffer
+        state.gainControlBuffer = buffer;
+        log('Initialized gain control buffer.');
+      }
+
+      function initGainNode() {
+        if (!state.context) {
+          log('Web Audio not yet initialized.');
+          return;
+        }
+
+        // Create our gain node and connect it to the speakers
+        const gainNode = state.context.createGain();
+        gainNode.gain = 1.0;
+        gainNode.connect(state.context.destination);
+
+        // Save a reference
+        state.gainNode = gainNode;
+
+        log('Created gain node.');
+      }
+
+      function playSound() {
+        if (!state.context) {
+          log('Web Audio not yet initialized.');
+          return;
+        }
+
+        if (!state.audioBuffer) {
+          log('Audio buffer not yet initialized.');
+          return;
+        }
+
+        if (!state.gainNode) {
+          log('Gain node not yet initialized.');
+          return;
+        }
+
+        // Create a source
+        const source = state.context.createBufferSource();
+
+        // Set it to use the buffer on a loop
+        source.buffer = state.audioBuffer;
+        source.loop = true;
+
+        // Connect it to the gain node
+        source.connect(state.gainNode);
+
+        // Call a function when it stops
+        source.onended = () => log('Buffer source stopped.');
+
+        // Start it immediately
+        log('Starting buffer source.');
+        source.start();
+
+        // Set it to stop after 10 seconds
+        source.stop(state.context.currentTime + 10);
+      }
+
+      function controlGain() {
+        if (!state.context) {
+          log('Web Audio not yet initialized.');
+          return;
+        }
+
+        if (!state.gainControlBuffer) {
+          log('Gain control buffer not yet initialized.');
+          return;
+        }
+
+        if (!state.gainNode) {
+          log('Gain node not yet initialized.');
+          return;
+        }
+
+        // Create a source
+        const source = state.context.createBufferSource();
+
+        // Use our gain control buffer on a loop
+        source.buffer = state.gainControlBuffer;
+        source.loop = true;
+
+        // Connect the source to the gain node
+        source.connect(state.gainNode.gain);
+
+        source.onended = () => {
+          log('Stopped controlling gain.');
+          state.gainNode.gain.value = 1.0;
+        };
+
+        // Set gain to zero
+        state.gainNode.gain.value = 0.0;
+
+        // Start controlling the gain
+        source.start();
+
+        // Set it to stop after 10 seconds
+        source.stop(state.context.currentTime + 10);
+      }
+
+      // Log to show what is happening
+      function log(message) {
+        // Log to console
+        console.log(message);
+
+        // And to the page
+        const liEl = document.createElement('li');
+        const content = document.createTextNode(message);
+        liEl.appendChild(content);
+        const logEl = document.getElementById('log');
+        logEl.appendChild(liEl);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Hello, Buffers</h1>
+    <div>
+      <h2>Buttons</h2>
+      <button id="init-wa-button">Initialize Web Audio</button>
+      <button id="init-audio-buffer-button">Initialize audio buffer</button>
+      <button id="create-gain-node-button">Create the gain node</button>
+      <button id="init-gain-control-buffer-button">
+        Initialize gain control buffer
+      </button>
+      <button id="play-button">Play sound</button>
+      <button id="control-gain-button">Control gain</button>
+    </div>
+    <div>
+      <p>Previous: <a href="hello_oscillators.html">Hello, Oscillators</a></p>
+      <p>Next: <a href="here_come_the_drums.html">Here come the drums</a></p>
+    </div>
+    <div>
+      <h2>Log</h2>
+      <ul id="log"></ul>
+    </div>
+  </body>
+</html>

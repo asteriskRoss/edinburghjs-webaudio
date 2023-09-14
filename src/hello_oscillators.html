@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello, Oscillators</title>
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      // Use a global object for application state
+      const state = {
+        context: null,
+        frequency: 440.0,
+        wave: 'sine'
+      };
+
+      // Set up the page
+      window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('init-button').addEventListener('click', init);
+        document
+          .getElementById('play-button')
+          .addEventListener('click', playSound);
+
+        let oscSelect = document.getElementById('osc-select');
+        oscSelect.value = state.wave;
+        oscSelect.addEventListener(
+          'change',
+          () => (state.wave = oscSelect.value)
+        );
+
+        let freqInput = document.getElementById('frequency-input');
+        freqInput.value = state.frequency;
+        freqInput.addEventListener(
+          'change',
+          () => (state.frequency = freqInput.value)
+        );
+      });
+
+      // Initialisation of the Audio Context can only happen
+      // after a user interacts with the page
+      function init() {
+        if (state.context === null) {
+          state.context = new AudioContext();
+          if (state.context) log('Initialized Web Audio.');
+        }
+      }
+
+      function playSound() {
+        if (!state.context) {
+          log('Web Audio not yet initialized.');
+          return;
+        }
+
+        // Create a source; note oscillators are single shot
+        // and cannot be reused.
+        const oscillator = state.context.createOscillator();
+
+        // Set the frequency to change the pitch
+        oscillator.frequency.setValueAtTime(
+          state.frequency,
+          state.context.currentTime
+        );
+
+        // Choose a waveform: "sine", "square", "sawtooth", "triangle" or "custom".
+        oscillator.type = state.wave;
+
+        // Connect it up so we can hear it
+        oscillator.connect(state.context.destination);
+
+        // Call a function when it stops
+        oscillator.onended = onOscillatorEnded;
+
+        // Start it immediately
+        log('Starting oscillator.');
+        oscillator.start();
+
+        // Schedule it to stop in 1.5 seconds
+        oscillator.stop(state.context.currentTime + 1.5);
+      }
+
+      function onOscillatorEnded() {
+        log('Oscillator stopped.');
+      }
+
+      // Log to show what is happening
+      function log(message) {
+        // Log to console
+        console.log(message);
+
+        // And to the page
+        const liEl = document.createElement('li');
+        const content = document.createTextNode(message);
+        liEl.appendChild(content);
+        const logEl = document.getElementById('log');
+        logEl.appendChild(liEl);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Hello, Oscillators</h1>
+
+    <div>
+      <h2>Controls</h2>
+      <label for="osc-type">Oscillator type:</label>
+      <select id="osc-select">
+        <option value="sine">Sine</option>
+        <option value="square">Square</option>
+        <option value="sawtooth">Sawtooth</option>
+        <option value="triangle">Triangle</option>
+      </select>
+      <label for="frequency">Frequency:</label>
+      <input id="frequency-input" type="number" />
+    </div>
+    <div>
+      <h2>Buttons</h2>
+      <button id="init-button">Initialize Web Audio</button>
+      <button id="play-button">Play sound</button>
+    </div>
+    <div>
+      <p>Previous: <a href="hello_webaudio.html">Hello, Web Audio</a></p>
+      <p>Next: <a href="hello_buffers.html">Hello, Buffers</a></p>
+    </div>
+    <div>
+      <h2>Log</h2>
+      <ul id="log"></ul>
+    </div>
+  </body>
+</html>

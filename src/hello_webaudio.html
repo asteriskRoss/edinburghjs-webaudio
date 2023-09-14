@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hello Web Audio</title>
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      // We need an instance of the Web Audio Context to do anything.
+      // Unfortunately we need to wait for some user interaction to
+      // do anything with it.
+
+      // This statement creates an AudioContext in the "suspended" state
+      // though this also generates a browser warning. An alternative (used in
+      // other examples) is to create the AudioContext after user interaction.
+      const context = new AudioContext();
+
+      // Set up event listeners once the page has loaded
+      window.addEventListener('DOMContentLoaded', () => {
+        document
+          .getElementById('play-button')
+          .addEventListener('click', playSound);
+      });
+
+      function playSound() {
+        log(`AudioContext.state: ${context.state}`);
+        if (context.state === 'suspended') {
+          log('Calling AudioContext.resume().');
+          context.resume();
+        }
+
+        // Create an oscillator as a source, using default settings
+        const oscillator = context.createOscillator();
+
+        // Connect it up so we can hear it
+        oscillator.connect(context.destination);
+
+        // Get it to call a function when it stops
+        oscillator.onended = () => log('Oscillator stopped.');
+
+        // Start it immediately
+        log('Starting oscillator.');
+        oscillator.start();
+
+        // Schedule it to stop in 1.5 seconds
+        oscillator.stop(context.currentTime + 1.5);
+      }
+
+      // Log to show what is happening
+      function log(message) {
+        // Log to console
+        console.log(message);
+
+        // And to the page
+        const liEl = document.createElement('li');
+        const content = document.createTextNode(message);
+        liEl.appendChild(content);
+        const logEl = document.getElementById('log');
+        logEl.appendChild(liEl);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Hello, Web Audio</h1>
+    <div>
+      <button id="play-button">Play sound</button>
+    </div>
+    <div>
+      <p>Next: <a href="hello_oscillators.html">Hello, Oscillators</a></p>
+    </div>
+    <div>
+      <h2>Log</h2>
+      <ul id="log"></ul>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "name": "edinburghjs-webaudio-20230919",
+  "version": "1.0.0",
+  "description": "Web Audio API demo presented at EdinburghJS on 19 September 2023",
+  "main": "index.html",
+  "scripts": {
+    "eslint": "eslint",
+    "prettier": "prettier",
+    "eslint-src": "eslint src/*.js src/*.html",
+    "prettier-write": "prettier --write src/*.html src/*.js"
+  },
+  "keywords": [
+    "webaudio",
+    "edinburghjs"
+  ],
+  "author": "Ross McKelvie",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-html": "^7.1.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.3"
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es6": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 2017,
+      "sourceType": "module"
+    },
+    "plugins": [
+      "html",
+      "prettier"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "prettier"
+    ]
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "none",
+    "singleQuote": true,
+    "printWidth": 80
+  }
+}

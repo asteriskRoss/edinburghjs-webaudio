@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Hey, Mister DJ</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module">
+      import { HouseMusic } from './house-music.js';
+
+      // Use a global object for application state
+      let houseMusic = null;
+
+      // Set up the page
+      window.addEventListener('DOMContentLoaded', () => {
+        document
+          .getElementById('initialize-button')
+          .addEventListener('click', init);
+      });
+
+      function init() {
+        if (houseMusic) return;
+
+        houseMusic = new HouseMusic();
+
+        document.getElementById('play-button').addEventListener('click', play);
+        document.getElementById('stop-button').addEventListener('click', stop);
+
+        const bpmInput = document.getElementById('bpm-input');
+        bpmInput.value = houseMusic.bpm;
+        bpmInput.addEventListener(
+          'change',
+          () => (houseMusic.bpm = parseFloat(bpmInput.value))
+        );
+
+        const kickDrumCheckbox = document.getElementById('kickdrum-checkbox');
+        kickDrumCheckbox.checked = houseMusic.playingKickDrum;
+        kickDrumCheckbox.addEventListener(
+          'change',
+          () => (houseMusic.playingKickDrum = kickDrumCheckbox.checked)
+        );
+
+        const hiHatCheckbox = document.getElementById('hihat-checkbox');
+        hiHatCheckbox.checked = houseMusic.playingHiHat;
+        hiHatCheckbox.addEventListener(
+          'change',
+          () => (houseMusic.playingHiHat = hiHatCheckbox.checked)
+        );
+
+        const riffCheckbox = document.getElementById('riff-checkbox');
+        riffCheckbox.checked = houseMusic.playingRiff;
+        riffCheckbox.addEventListener(
+          'change',
+          () => (houseMusic.playingRiff = riffCheckbox.checked)
+        );
+
+        const bassCheckbox = document.getElementById('bass-checkbox');
+        bassCheckbox.checked = houseMusic.playingBass;
+        bassCheckbox.addEventListener(
+          'change',
+          () => (houseMusic.playingBass = bassCheckbox.checked)
+        );
+      }
+
+      function play() {
+        if (houseMusic && !houseMusic.playing) houseMusic.start();
+      }
+
+      function stop() {
+        if (houseMusic) houseMusic.stop();
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Hey, Mister DJ</h1>
+
+    <div>
+      <h2>Controls</h2>
+      <ul>
+        <li>
+          <label for="bpm-input">Beats per minute:</label>
+          <input id="bpm-input" type="number" />
+        </li>
+        <li>
+          <label for="kickdrum-checkbox">Kick drum</label>
+          <input id="kickdrum-checkbox" type="checkbox" />
+        </li>
+        <li>
+          <label for="hihat-checkbox">Hi-hat</label>
+          <input id="hihat-checkbox" type="checkbox" />
+        </li>
+        <li>
+          <label for="riff-checkbox">Riff</label>
+          <input id="riff-checkbox" type="checkbox" />
+        </li>
+        <li>
+          <label for="bass-checkbox">Bass</label>
+          <input id="bass-checkbox" type="checkbox" />
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h2>Buttons</h2>
+      <button id="initialize-button">Initialize</button>
+      <button id="play-button">Play</button>
+      <button id="stop-button">Stop</button>
+    </div>
+    <div>
+      <p>
+        Previous:
+        <a href="get_ready_for_the_riff.html">Get ready for the riff</a>
+      </p>
+    </div>
+  </body>
+</html>
