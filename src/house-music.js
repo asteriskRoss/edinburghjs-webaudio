@@ -117,9 +117,9 @@ const ARRANGEMENT_RIFF0 = [
   Note.G3, , Note.G3, ,
   , , , ,
 
-	Note.G3, , Note.G3,
+	Note.G3, , Note.G3, ,
 	, , , ,
-	Note.G3, , Note.G3,
+	Note.G3, , Note.G3, ,
 	, , , ,
 ];
 
@@ -179,7 +179,9 @@ export class HouseMusic {
     // Flags for playing instruments
     this.playingKickDrum = true;
     this.playingHiHat = true;
-    this.playingRiff = true;
+    this.playingRiff0 = true;
+    this.playingRiff1 = true;
+    this.playingRiff2 = true;
     this.playingBass = true;
 
     // Beats per minute for playback
@@ -265,7 +267,9 @@ export class HouseMusic {
       houseMusic.arrangementTime <=
       houseMusic.context.currentTime + SCHEDULE_AHEAD
     ) {
-      // Schedule the next sounds
+      // Schedule the next sounds. In production code I would make this a bit
+      // neater by having some kind of Instrument class that provided a consistent
+      // interface such that all instruments could be scheduled in a DRY for loop
       if (
         houseMusic.playingKickDrum &&
         ARRANGEMENT_KICK_DRUM[houseMusic.arrangementIndex]
@@ -282,22 +286,27 @@ export class HouseMusic {
         console.log(`Playing hihat: ${houseMusic.arrangementIndex}`);
       }
 
-      if (houseMusic.playingRiff) {
-        const note0 = ARRANGEMENT_RIFF0[houseMusic.arrangementIndex];
-        const note1 = ARRANGEMENT_RIFF1[houseMusic.arrangementIndex];
-        const note2 = ARRANGEMENT_RIFF2[houseMusic.arrangementIndex];
+      if (houseMusic.playingRiff0) {
+        const note = ARRANGEMENT_RIFF0[houseMusic.arrangementIndex];
+        if (note) {
+          console.log(`Playing riff0: ${houseMusic.arrangementIndex} ${note}`);
+          houseMusic.riff0.play(houseMusic.arrangementTime, note);
+        }
+      }
 
-        if (note0) {
-          console.log(`Playing riff0: ${houseMusic.arrangementIndex} ${note0}`);
-          houseMusic.riff0.play(houseMusic.arrangementTime, note0);
+      if (houseMusic.playingRiff1) {
+        const note = ARRANGEMENT_RIFF1[houseMusic.arrangementIndex];
+        if (note) {
+          console.log(`Playing riff1: ${houseMusic.arrangementIndex} ${note}`);
+          houseMusic.riff0.play(houseMusic.arrangementTime, note);
         }
-        if (note1) {
-          console.log(`Playing riff1: ${houseMusic.arrangementIndex} ${note1}`);
-          houseMusic.riff1.play(houseMusic.arrangementTime, note1);
-        }
-        if (note2) {
-          console.log(`Playing riff2: ${houseMusic.arrangementIndex} ${note2}`);
-          houseMusic.riff2.play(houseMusic.arrangementTime, note2);
+      }
+
+      if (houseMusic.playingRiff2) {
+        const note = ARRANGEMENT_RIFF2[houseMusic.arrangementIndex];
+        if (note) {
+          console.log(`Playing riff2: ${houseMusic.arrangementIndex} ${note}`);
+          houseMusic.riff0.play(houseMusic.arrangementTime, note);
         }
       }
 

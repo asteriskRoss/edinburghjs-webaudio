@@ -46,11 +46,25 @@
           () => (houseMusic.playingHiHat = hiHatCheckbox.checked)
         );
 
-        const riffCheckbox = document.getElementById('riff-checkbox');
-        riffCheckbox.checked = houseMusic.playingRiff;
-        riffCheckbox.addEventListener(
+        const riff0Checkbox = document.getElementById('riff0-checkbox');
+        riff0Checkbox.checked = houseMusic.playingRiff0;
+        riff0Checkbox.addEventListener(
           'change',
-          () => (houseMusic.playingRiff = riffCheckbox.checked)
+          () => (houseMusic.playingRiff0 = riff0Checkbox.checked)
+        );
+
+        const riff1Checkbox = document.getElementById('riff1-checkbox');
+        riff1Checkbox.checked = houseMusic.playingRiff1;
+        riff1Checkbox.addEventListener(
+          'change',
+          () => (houseMusic.playingRiff1 = riff1Checkbox.checked)
+        );
+
+        const riff2Checkbox = document.getElementById('riff2-checkbox');
+        riff2Checkbox.checked = houseMusic.playingRiff2;
+        riff2Checkbox.addEventListener(
+          'change',
+          () => (houseMusic.playingRiff2 = riff2Checkbox.checked)
         );
 
         const bassCheckbox = document.getElementById('bass-checkbox');
@@ -89,8 +103,16 @@
           <input id="hihat-checkbox" type="checkbox" />
         </li>
         <li>
-          <label for="riff-checkbox">Riff</label>
-          <input id="riff-checkbox" type="checkbox" />
+          <label for="riff0-checkbox">Riff0</label>
+          <input id="riff0-checkbox" type="checkbox" />
+        </li>
+        <li>
+          <label for="riff1-checkbox">Riff1</label>
+          <input id="riff1-checkbox" type="checkbox" />
+        </li>
+        <li>
+          <label for="riff2-checkbox">Riff2</label>
+          <input id="riff2-checkbox" type="checkbox" />
         </li>
         <li>
           <label for="bass-checkbox">Bass</label>
